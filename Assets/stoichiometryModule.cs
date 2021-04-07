@@ -42,7 +42,7 @@ public class stoichiometryModule : MonoBehaviour {
         new Mixture("HCl",36.458,"","Hydrochloric Acid"),//E
         new Mixture("HF",20.006,"","Hydroflouric Acid"),//A
         new Mixture("HBr",80.912,"","Hydrogen Bromide"),//F
-        new Mixture("HC₂H₃O₂",60.052,"","Acetic Acid"),//I
+        new Mixture("HC₂H₃O₂",59.044,"","Acetic Acid"),//I
         new Mixture("CF₃SO₃H",150.07,"","Triflic Acid"),//J
         new Mixture("HNO₃",63.012,"","Nitric Acid"),//C
         new Mixture("H₂CO₃",62.024,"","Carbonic Acid"),//G
@@ -56,7 +56,7 @@ public class stoichiometryModule : MonoBehaviour {
         new Mixture("LiOH",23.947,"rb","Lithium Hydroxide"),
         new Mixture("LiC₄H₉",64.056,"rg","ButyLithium"),
         new Mixture("NaNH₂",39.013,"k","Sodium Amide"), //k denotes that the mixture is entirely black, if the string is ever a size of 0 it should default to k
-        new Mixture("Mg(OH)₂",41.312,"rgb","Magnesium Hydroxide")
+        new Mixture("Mg(OH)₂",58.319,"rgb","Magnesium Hydroxide")
     };
     
 
@@ -276,7 +276,6 @@ public class stoichiometryModule : MonoBehaviour {
             
             if (ind.Any("GEALBCOT".Contains))
             {
-                Debug.Log(ind);
                 offset1++;
                 if (Info.IsIndicatorOn(ind)) onInds++;
                 else offInds++;
@@ -347,7 +346,7 @@ public class stoichiometryModule : MonoBehaviour {
         }
 
         while (secondBase < 0) { secondBase += 8; }
-        Debug.LogFormat("[Stoichiometry #{6}] Left Base Position {0} + {1} = {2}, Right Base Position {3} - {4} = {5}.", colorLogOne, offset1, firstBase, colorLogTwo, offset2, secondBase, _moduleId);
+        Debug.LogFormat("[Stoichiometry #{6}] Left Base Position {0}, offset of {1}, final position of {2}, Right Base Position {3}, offset of {4}, final position of {5}.", colorLogOne, offset1, firstBase, colorLogTwo, offset2, secondBase, _moduleId);
 
         leftBase = bases[firstBase];
         rightBase = bases[secondBase];
@@ -356,8 +355,7 @@ public class stoichiometryModule : MonoBehaviour {
 
         double firstAcidMoles = startOne / leftAcid.getMass(), secondAcidMoles = startTwo / rightAcid.getMass();
 
-        Debug.LogFormat("L {0} / {1} = {2} mols",startOne,leftAcid.getMass(),firstAcidMoles);
-        Debug.LogFormat("R {0} / {1} = {2} mols", startTwo, rightAcid.getMass(), secondAcidMoles);
+        
 
         leftSalt = reactions[Array.IndexOf(bases, leftBase), Array.IndexOf(acids, leftAcid)];
         rightSalt = reactions[Array.IndexOf(bases, rightBase), Array.IndexOf(acids, rightAcid)];
@@ -366,8 +364,7 @@ public class stoichiometryModule : MonoBehaviour {
 
         double leftBaseGrams = leftSalt.getRatio() * firstAcidMoles * leftBase.getMass(),
             rightBaseGrams = rightSalt.getRatio() * secondAcidMoles * rightBase.getMass();
-        Debug.LogFormat("L: {0} * {1} * {2} = {3} grams",leftSalt.getRatio(),firstAcidMoles,leftBase.getMass(),leftBaseGrams);
-        Debug.LogFormat("R: {0} * {1} * {2} = {3} grams",rightSalt.getRatio(),secondAcidMoles,rightBase.getMass(),rightBaseGrams);
+        
 
         leftBaseDrops = (int) Math.Ceiling(leftBaseGrams); rightBaseDrops = (int)Math.Ceiling(rightBaseGrams);
         if (leftBaseDrops == 0) leftBaseDrops++; if (rightBaseDrops == 0) rightBaseDrops++;
@@ -378,9 +375,17 @@ public class stoichiometryModule : MonoBehaviour {
         leftLogOne = (leftGas) ? "opened" : "closed"; leftLogTwo = (leftToxic) ? "On" : "Off";
         rightLogOne = (rightGas) ? "opened" : "closed"; rightLogTwo = (rightToxic) ? "On" : "Off";
 
+        Debug.LogFormat("[Stoichiometry #{4}] {0} / {1} = {2} mols of {3}", startOne, leftAcid.getMass(), firstAcidMoles, leftAcid.getName(), _moduleId);
+        Debug.LogFormat("[Stoichiometry #{0}] {1} mols of {2} * molar ratio of {3} * molar mass of {4} ({5}) = {6} grams of {4}", _moduleId, firstAcidMoles, leftAcid.getName(),
+            leftSalt.getRatio(),leftBase.getName(),leftBase.getMass(),leftBaseGrams);
 
-        Debug.LogFormat("[Stoichiometry #{0}] Left Combo: {1} drops of {2}, prep for {3} with vents {4} and filter {5}.", _moduleId, leftBaseDrops, leftBase.getSymbol(), leftSalt.getSalt(), leftLogOne, leftLogTwo);
-        Debug.LogFormat("[Stoichiometry #{0}] Right Combo: {1} drops of {2}, prep for {3} with vents {4} and filter {5}.", _moduleId, rightBaseDrops, rightBase.getSymbol(), rightSalt.getSalt(), rightLogOne, rightLogTwo);
+        Debug.LogFormat("[Stoichiometry #{4}] {0} / {1} = {2} mols of {3}", startTwo, rightAcid.getMass(), secondAcidMoles,3, rightAcid.getName(),_moduleId);
+        Debug.LogFormat("[Stoichiometry #{0}] {1} mols of {2} * molar ratio of {3} * molar mass of {4} ({5}) = {6} grams of {4}", _moduleId, secondAcidMoles, rightAcid.getName(),
+            rightSalt.getRatio(),rightBase.getName(),rightBase.getMass(),rightBaseGrams);
+
+
+        Debug.LogFormat("[Stoichiometry #{0}] First Combo: {1} drops of {2}, prep for {3} with vents {4} and filter {5}.", _moduleId, leftBaseDrops, leftBase.getSymbol(), leftSalt.getSalt(), leftLogOne, leftLogTwo);
+        Debug.LogFormat("[Stoichiometry #{0}] Second Combo: {1} drops of {2}, prep for {3} with vents {4} and filter {5}.", _moduleId, rightBaseDrops, rightBase.getSymbol(), rightSalt.getSalt(), rightLogOne, rightLogTwo);
         if (unicorn)
         {
             int uniLog = ((int)thisNode.getMix().getMass() >= 60) ? digitalRoot((int)thisNode.getMix().getMass()) : (int)thisNode.getMix().getMass();
@@ -444,6 +449,7 @@ public class stoichiometryModule : MonoBehaviour {
                 Audio.PlaySoundAtTransform("solve", Module.transform);
                 centralVial.GetComponent<Renderer>().material = grey;
                 baseDisplay.color = Color.black;
+                _isSolved = true;
             }
             else { Module.HandleStrike();
                 Debug.LogFormat("[Stoichiometry #{0}] Did not submit on {1}. Issuing Strike.",_moduleId, molMass);
@@ -502,19 +508,19 @@ public class stoichiometryModule : MonoBehaviour {
                     }
                     else
                     {
-                        Debug.LogFormat("[Stoichiometry #{0}] Second Base ({1}) and Salt ({2}) match, but incorrect drop amount ({3} =/= {4}). Issuing Strike.", _moduleId, currentBase, currentSalt, drops, nextDrops);
+                        Debug.LogFormat("[Stoichiometry #{0}] Second Base ({1}) and Salt ({2}) match, but incorrect drop amount ({3} =/= {4}). Issuing Strike.", _moduleId, currentBase.getName(), currentSalt.getSalt(), drops, nextDrops);
                         Module.HandleStrike();
                     }
                 }
                 else
                 {
-                    Debug.LogFormat("[Stoichiometry #{0}] Second Base ({1}) does not match it's Salt({2} =/= {3}). Issuing Strike.", _moduleId, nextBase, currentSalt, nextSalt);
+                    Debug.LogFormat("[Stoichiometry #{0}] Second Base ({1}) does not match it's Salt({2} =/= {3}). Issuing Strike.", _moduleId, nextBase.getName(), currentSalt, nextSalt);
                     Module.HandleStrike();
                 }
             }
             else
             {
-                Debug.LogFormat("[Stoichiometry #{0}] Second Acid ({1}) does not match it's Base ({2} =/= {3}). Issuing Strike.", _moduleId, nextAcid, currentBase, nextBase);
+                Debug.LogFormat("[Stoichiometry #{0}] Second Acid ({1}) does not match it's Base ({2} =/= {3}). Issuing Strike.", _moduleId, nextAcid.getName(), currentBase, nextBase);
                 Module.HandleStrike();
             }
 
@@ -538,17 +544,18 @@ public class stoichiometryModule : MonoBehaviour {
                         string logFirst = (leftGas) ? "open" : "closed";
                         string logSecond = (leftToxic) ? "On" : "Off";
                         Debug.LogFormat("[Stoichiometry #{0}] First Base and Salt matches with the correct drop amount, but the Vent should be {1} and the Filter should be {2}. Issuing Strike.",_moduleId, logFirst, logSecond);
+                        Module.HandleStrike();
                     }
                 }
                 else
                 {
-                    Debug.LogFormat("[Stoichiometry #{0}] First Base ({1}) and Salt ({2}) match, but incorrect drop amount ({3} =/= {4}). Issuing Strike.",_moduleId,currentBase,currentSalt,drops,leftBaseDrops);
+                    Debug.LogFormat("[Stoichiometry #{0}] First Base ({1}) and Salt ({2}) match, but incorrect drop amount ({3} =/= {4}). Issuing Strike.",_moduleId,currentBase.getName(), currentSalt.getSalt(), drops,leftBaseDrops);
                     Module.HandleStrike();
                 }
 
             }
             else {
-                Debug.LogFormat("[Stoichiometry #{0}] First Base ({1}) does not match it's Salt({2} =/= {3}). Issuing Strike.",_moduleId,currentBase,currentSalt,leftSalt);
+                Debug.LogFormat("[Stoichiometry #{0}] First Base ({1}) does not match it's Salt({2} =/= {3}). Issuing Strike.",_moduleId,currentBase.getName(), currentSalt.getSalt(),leftSalt);
                 Module.HandleStrike();
             }
         }
@@ -570,25 +577,26 @@ public class stoichiometryModule : MonoBehaviour {
                         string logFirst = (rightGas) ? "open" : "closed";
                         string logSecond = (rightToxic) ? "On" : "Off";
                         Debug.LogFormat("[Stoichiometry #{0}] First Base and Salt matches with the correct drop amount, but the Right Vent should be {1} and the Filter should be {2}. Issuing Strike.", _moduleId, logFirst, logSecond);
+                        Module.HandleStrike();
                     }
                 }
                 else
                 {
-                    Debug.LogFormat("[Stoichiometry #{0}] First Base ({1}) and Salt ({2}) match, but incorrect drop amount ({3} =/= {4}). Issuing Strike.", _moduleId, currentBase, currentSalt, drops, rightBaseDrops);
+                    Debug.LogFormat("[Stoichiometry #{0}] First Base ({1}) and Salt ({2}) match, but incorrect drop amount ({3} =/= {4}). Issuing Strike.", _moduleId, currentBase.getName(), currentSalt.getSalt(), drops, rightBaseDrops);
                     Module.HandleStrike();
                 }
 
             }
             else
             {
-                Debug.LogFormat("[Stoichiometry #{0}] First Base ({1}) does not match it's Salt({2} =/= {3}). Issuing Strike.", _moduleId, currentBase, currentSalt, rightSalt);
+                Debug.LogFormat("[Stoichiometry #{0}] First Base ({1}) does not match it's Salt({2} =/= {3}). Issuing Strike.", _moduleId, currentBase.getName(), currentSalt.getSalt(), rightSalt);
                 Module.HandleStrike();
             }
         }
         else
         {
             Module.HandleStrike();
-            Debug.LogFormat("[Stoichiometry #{0}] Submitted Base ({1}) was not relevant to either solution. Issuing Strike.",_moduleId,currentBase);
+            Debug.LogFormat("[Stoichiometry #{0}] Submitted Base ({1}) was not relevant to either solution. Issuing Strike.",_moduleId, currentBase.getName());
         }
     }
 
@@ -631,7 +639,6 @@ public class stoichiometryModule : MonoBehaviour {
     }
     void handleBaseTravel(int i)
     {
-        
         if (!_lightsOn || _isSolved) return;
         Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, Module.transform);
         //whichBase represents either a 0 or 1. 0 is base one, 1 is base two. I understand, it's weird, but it works.
@@ -670,7 +677,6 @@ public class stoichiometryModule : MonoBehaviour {
     void handleBaseToggle()
     {
         if (!_lightsOn || _isSolved || halfSolved) return;
-        
         Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, Module.transform);
         if (currentDisplay)
         {
@@ -1035,7 +1041,7 @@ public class stoichiometryModule : MonoBehaviour {
         return (adder >= 20);
     }
     bool oddModules(){return (Info.GetModuleNames().Count() % 2 == 0);}
-    bool needyPresent(){return !(Info.GetModuleNames().Count() == Info.GetSolvableModuleNames().Count());//counts how many modules are on the bomb and how many are solvable. If they are equal, there are no needys present.
+    bool needyPresent(){return (Info.GetModuleNames().Count() != Info.GetSolvableModuleNames().Count());//counts how many modules are on the bomb and how many are solvable. If they are equal, there are no needys present.
     }
     bool oddBatt(){return (Info.GetBatteryCount() % 2 == 1);}
     bool moreDigThanLet() {return (Info.GetSerialNumberNumbers().Count() >= Info.GetSerialNumberLetters().Count());}
