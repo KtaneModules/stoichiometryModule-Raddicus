@@ -268,7 +268,6 @@ public class stoichiometryModule : MonoBehaviour {
 
         #region Base Determining
 
-        startingTime = (int)Info.GetTime();
         int offset1 = Int32.Parse(""+ Info.GetSerialNumber()[5]), onInds = 0, offInds = 0;
         //Debug.Log("Offset1 Init= " + offset1);
         foreach (string ind in Info.GetIndicators())
@@ -375,11 +374,11 @@ public class stoichiometryModule : MonoBehaviour {
         leftLogOne = (leftGas) ? "opened" : "closed"; leftLogTwo = (leftToxic) ? "On" : "Off";
         rightLogOne = (rightGas) ? "opened" : "closed"; rightLogTwo = (rightToxic) ? "On" : "Off";
 
-        Debug.LogFormat("[Stoichiometry #{4}] {0} / {1} = {2} mols of {3}", startOne, leftAcid.getMass(), firstAcidMoles, leftAcid.getName(), _moduleId);
+        Debug.LogFormat("[Stoichiometry #{0}] {1} / {2} = {3} mols of {4}", _moduleId, startOne, leftAcid.getMass(), firstAcidMoles, leftAcid.getName());
         Debug.LogFormat("[Stoichiometry #{0}] {1} mols of {2} * molar ratio of {3} * molar mass of {4} ({5}) = {6} grams of {4}", _moduleId, firstAcidMoles, leftAcid.getName(),
             leftSalt.getRatio(),leftBase.getName(),leftBase.getMass(),leftBaseGrams);
 
-        Debug.LogFormat("[Stoichiometry #{4}] {0} / {1} = {2} mols of {3}", startTwo, rightAcid.getMass(), secondAcidMoles,3, rightAcid.getName(),_moduleId);
+        Debug.LogFormat("[Stoichiometry #{0}] {1} / {2} = {3} mols of {4}", _moduleId, startTwo, rightAcid.getMass(), secondAcidMoles,rightAcid.getName());
         Debug.LogFormat("[Stoichiometry #{0}] {1} mols of {2} * molar ratio of {3} * molar mass of {4} ({5}) = {6} grams of {4}", _moduleId, secondAcidMoles, rightAcid.getName(),
             rightSalt.getRatio(),rightBase.getName(),rightBase.getMass(),rightBaseGrams);
 
