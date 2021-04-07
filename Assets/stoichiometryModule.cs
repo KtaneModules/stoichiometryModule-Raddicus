@@ -64,21 +64,21 @@ public class stoichiometryModule : MonoBehaviour {
     #region Reactions Matrix
     private Reaction[,] reactions = new Reaction[,] {
         //Sodium Hydroxide, 1
-        { new Reaction("Na₂SO₄",true,true,false,2/1),new Reaction("NaCl",true,true,false,1/1),new Reaction("NaF",true,true,true,1/1),new Reaction("NaBr",true,false,false,1/1),new Reaction("NaC₂H₃O₂",true,true,true,1/1),new Reaction("NaOTf",true,true,false,1/1),new Reaction("NaNO₃",true,false,false,1/1),new Reaction("Na₂CO₃",true,true,false,2/1),new Reaction("Na₃PO₄",true,true,true,3/1),new Reaction("NaBF₄",true,false,false,1/1)},
+        { new Reaction("Na₂SO₄",true,true,false,(double) 2/1),new Reaction("NaCl",true,true,false,1/1),new Reaction("NaF",true,true,true,1/1),new Reaction("NaBr",true,false,false,1/1),new Reaction("NaC₂H₃O₂",true,true,true,1/1),new Reaction("NaOTf",true,true,false,1/1),new Reaction("NaNO₃",true,false,false,1/1),new Reaction("Na₂CO₃",true,true,false,2/1),new Reaction("Na₃PO₄",true,true,true,3/1),new Reaction("NaBF₄",true,false,false,1/1)},
         //Sodium Bicarbonate, 2
-        { new Reaction("Na₂SO₄",true,true,false,2/1),new Reaction("NaCl",true,true,true,1/1),new Reaction("NaF",true,false,false,1/1),new Reaction("NaBr",true,false,false,1/1),new Reaction("NaC₂H₃O₂",true,true,false,1/1),new Reaction("NaOTf",true,false,false,1/1),new Reaction("NaNO₃",true,true,false,1/1),new Reaction("Na₂CO₃",true,false,false),new Reaction("Na₃PO₄",true,true,true,3/1),new Reaction("NaBF₄",true,false,false,1/1)},
+        { new Reaction("Na₂SO₄",true,true,false,(double) 2/1),new Reaction("NaCl",true,true,true,1/1),new Reaction("NaF",true,false,false,1/1),new Reaction("NaBr",true,false,false,1/1),new Reaction("NaC₂H₃O₂",true,true,false,1/1),new Reaction("NaOTf",true,false,false,1/1),new Reaction("NaNO₃",true,true,false,1/1),new Reaction("Na₂CO₃",true,false,false,(double) 1/1),new Reaction("Na₃PO₄",true,true,true,3/1),new Reaction("NaBF₄",true,false,false,1/1)},
         //Potassium Hydroxide, 3
-        { new Reaction("K₂SO₄",true,true,false,2/1),new Reaction("KCl",true,false,false,1/1),new Reaction("KF",true,true,false,1/1),new Reaction("KBr",true,false,false,1/1),new Reaction("KC₂H₃O₂",true,true,true,1/1),new Reaction("KOTf",true,true,true,1/1),new Reaction("KNO₃",true,true,false,1/1),new Reaction("K₂CO₃",true,false,false,2/1),new Reaction("K₃PO₄",true,true,false,3/1),new Reaction("KBF₄",true,true,true,1/1)},
+        { new Reaction("K₂SO₄",true,true,false,(double) 2/1),new Reaction("KCl",true,false,false,1/1),new Reaction("KF",true,true,false,1/1),new Reaction("KBr",true,false,false,1/1),new Reaction("KC₂H₃O₂",true,true,true,1/1),new Reaction("KOTf",true,true,true,1/1),new Reaction("KNO₃",true,true,false,1/1),new Reaction("K₂CO₃",true,false,false,2/1),new Reaction("K₃PO₄",true,true,false,3/1),new Reaction("KBF₄",true,true,true,1/1)},
         //Ammonia, 4
-        { new Reaction("(NH₄)₂SO₄",true,true,true,2/1),new Reaction("NH₄Cl",true,true,true,1/1),new Reaction("NH₄F",true,false,false,1/1),new Reaction("NH₄Br",true,false,false,1/1),new Reaction("NH₄C₂H₃O₂",true,true,false,1/1),new Reaction("NH₄OTf",true,false,false,1/1),new Reaction("NH₄NO₃",true,true,false,1/1),new Reaction("(NH₄)₂CO₃",true,true,false,2/1),new Reaction("(NH₄)₃PO₄",true,true,true,3/1),new Reaction("NH₄BF₄",true,true,true,1/1)},
+        { new Reaction("(NH₄)₂SO₄",true,true,true,(double) 2/1),new Reaction("NH₄Cl",true,true,true,1/1),new Reaction("NH₄F",true,false,false,1/1),new Reaction("NH₄Br",true,false,false,1/1),new Reaction("NH₄C₂H₃O₂",true,true,false,1/1),new Reaction("NH₄OTf",true,false,false,1/1),new Reaction("NH₄NO₃",true,true,false,1/1),new Reaction("(NH₄)₂CO₃",true,true,false,2/1),new Reaction("(NH₄)₃PO₄",true,true,true,3/1),new Reaction("NH₄BF₄",true,true,true,1/1)},
         //Lithium Hydroxide, 5
-        { new Reaction("Li₂SO₄",true,false,false,2/1),new Reaction("LiCl",true,false,false,1/1),new Reaction("LiF",true,true,true,1/1),new Reaction("LiBr",true,true,true,1/1),new Reaction("LiC₂H₃O₂",true,true,true,1/1),new Reaction("LiOTf",true,true,true,1/1),new Reaction("LiNO₃",true,true,true,1/1),new Reaction("Li₂CO₃",true,false,false,2/1),new Reaction("Li₃PO₄",true,false,false,3/1),new Reaction("LiBF₄",true,false,false,1/1)},
+        { new Reaction("Li₂SO₄",true,false,false,(double) 2/1),new Reaction("LiCl",true,false,false,1/1),new Reaction("LiF",true,true,true,1/1),new Reaction("LiBr",true,true,true,1/1),new Reaction("LiC₂H₃O₂",true,true,true,1/1),new Reaction("LiOTf",true,true,true,1/1),new Reaction("LiNO₃",true,true,true,1/1),new Reaction("Li₂CO₃",true,false,false,2/1),new Reaction("Li₃PO₄",true,false,false,3/1),new Reaction("LiBF₄",true,false,false,1/1)},
         //ButyLithium, 6
-        { new Reaction("Li₂SO₄",true,false,false,2/1),new Reaction("LiCl",true,true,true,1/1),new Reaction("LiF",true,true,true,1/1),new Reaction("LiBr",true,false,false,1/1),new Reaction("LiC₂H₃O₂",true,true,true,1/1),new Reaction("LiOTf",true,false,false,1/1),new Reaction("LiNO₃",true,false,false,1/1),new Reaction("Li₂CO₃",true,true,true,2/1),new Reaction("Li₃PO₄",true,false,false,3/1),new Reaction("LiBF₄",true,true,false,1/1)},
+        { new Reaction("Li₂SO₄",true,false,false,(double) 2/1),new Reaction("LiCl",true,true,true,1/1),new Reaction("LiF",true,true,true,1/1),new Reaction("LiBr",true,false,false,1/1),new Reaction("LiC₂H₃O₂",true,true,true,1/1),new Reaction("LiOTf",true,false,false,1/1),new Reaction("LiNO₃",true,false,false,1/1),new Reaction("Li₂CO₃",true,true,true,2/1),new Reaction("Li₃PO₄",true,false,false,3/1),new Reaction("LiBF₄",true,true,false,1/1)},
         //Sodium Amide, 7
-        { new Reaction("Na₂SO₄",true,false,false,2/1),new Reaction("NaCl",true,true,true,1/1),new Reaction("NaF",true,false,false,1/1),new Reaction("NaBr",true,true,false,1/1),new Reaction("NaC₂H₃O₂",true,false,false,1/1),new Reaction("NaOTf",true,true,false,1/1),new Reaction("NaNO₃",true,true,false,1/1),new Reaction("Na₂CO₃",true,true,true,2/1),new Reaction("Na₃PO₄",true,true,true,3/1),new Reaction("NaBF₄",true,true,false,1/1)},
+        { new Reaction("Na₂SO₄",true,false,false,(double) 2/1),new Reaction("NaCl",true,true,true,1/1),new Reaction("NaF",true,false,false,1/1),new Reaction("NaBr",true,true,false,1/1),new Reaction("NaC₂H₃O₂",true,false,false,1/1),new Reaction("NaOTf",true,true,false,1/1),new Reaction("NaNO₃",true,true,false,1/1),new Reaction("Na₂CO₃",true,true,true,2/1),new Reaction("Na₃PO₄",true,true,true,3/1),new Reaction("NaBF₄",true,true,false,1/1)},
         //Magnesium Hydroxide, 8
-        { new Reaction("MgSO₄",true,true,true,1/1),new Reaction("MgCl₂",true,true,true,1/2),new Reaction("MgF₂",true,false,false,1/2),new Reaction("MgBr₂",true,false,false,1/2),new Reaction("Mg(C₂H₃O₂)₂",true,true,false,1/2),new Reaction("Mg(OTf)₂",true,true,true,1/2),new Reaction("Mg(NO₃)₂",true,false,false,1/2),new Reaction("MgCO₃",true,true,false,1/1),new Reaction("Mg₃(PO₄)₂",true,true,true,3/2),new Reaction("Mg(BF₄)₂",true,true,false,1/2)},
+        { new Reaction("MgSO₄",true,true,true,(double) 1/1),new Reaction("MgCl₂",true,true,true,(double) 0.5),new Reaction("MgF₂",true,false,false,(double) 0.5),new Reaction("MgBr₂",true,false,false,(double)0.5),new Reaction("Mg(C₂H₃O₂)₂",true,true,false,(double)0.5),new Reaction("Mg(OTf)₂",true,true,true,(double) 0.5),new Reaction("Mg(NO₃)₂",true,false,false,(double) 0.5),new Reaction("MgCO₃",true,true,false,1/1),new Reaction("Mg₃(PO₄)₂",true,true,true,(double) 1.5),new Reaction("Mg(BF₄)₂",true,true,false,(double)0.5)},
     };
     #endregion
 
@@ -88,7 +88,7 @@ public class stoichiometryModule : MonoBehaviour {
     private Node startingNode, thisNode, antiNode;
     private string dayOfWeek = DateTime.Today.DayOfWeek.ToString();
     private string[] daysOfTheWeek = { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
-    private double[] modifiers = { (double)1/2,(double)8/3,(double)5/13,(double)3/2, (double)9/4, 1, (double)4/7};
+    private double[] modifiers = { (double)1/2,(double)3/2,(double)7/5,(double)40/20, (double)9/4, 1, (double)13/16};
     
     private double startOne, startTwo;
     
@@ -220,26 +220,40 @@ public class stoichiometryModule : MonoBehaviour {
         antiNode = startingNode;
         List<bool> path = new List<bool>();//a list of booleans that dictates the order of paths taken, either yes (1) or no (0)
         string thisPath = "", antiPath = "";
-        while (thisNode.yesNode() != null)
+        while (thisNode.yesNode() != null) //first run, normal
         {
             path.Add(thisNode.nodeCondition());
             if (thisNode.nodeCondition())//if this node's condition returns true
             {
-                Debug.LogFormat("[Stoichiometry #{0}] {1} is True.", _moduleId, thisNode.getLabel());
+                Debug.LogFormat("[Stoichiometry #{0}] Normal Run: {1} is True.", _moduleId, thisNode.getLabel());
                 thisNode = thisNode.yesNode();
                 thisPath = thisPath + "Yes ";
-                antiNode = antiNode.noNode();
-                antiPath = antiPath + "No ";
             }
             else//if this node's condition returns false
             {
-                Debug.LogFormat("[Stoichiometry #{0}] {1} is False.", _moduleId, thisNode.getLabel());
+                Debug.LogFormat("[Stoichiometry #{0}] Normal Run: {1} is False.", _moduleId, thisNode.getLabel());
                 thisNode = thisNode.noNode();
                 thisPath = thisPath + "No ";
+            }
+        }
+
+        while(antiNode.yesNode() != null)
+        {
+            path.Add(antiNode.nodeCondition());
+            if (antiNode.nodeCondition())
+            {
+                Debug.LogFormat("[Stoichiometry #{0}] Reverse Run: {1} is True.", _moduleId, antiNode.getLabel());
+                antiNode = antiNode.noNode();
+                antiPath = antiPath + "No ";
+            }
+            else
+            {
+                Debug.LogFormat("[Stoichiometry #{0}] Reverse Run: {1} is False.", _moduleId, antiNode.getLabel());
                 antiNode = antiNode.yesNode();
                 antiPath = antiPath + "Yes ";
             }
         }
+
         leftAcid = thisNode.getMix();
         rightAcid = antiNode.getMix();
         Debug.LogFormat("[Stoichiometry #{0}] Paths Taken are {1}, {2}", _moduleId, thisPath, antiPath);
@@ -248,30 +262,39 @@ public class stoichiometryModule : MonoBehaviour {
 
         unicorn = assessUnicorn();
 
-        startOne = (modifiers[Array.IndexOf(daysOfTheWeek, dayOfWeek)] * 10);
-        startTwo = (modifiers[Array.IndexOf(daysOfTheWeek, dayOfWeek)] * 10);
-        //Debug.Log("Left Acid Quantity is: "+ startOne+". Right Acid Quantity is: " + startTwo + ".");
+        startOne = (modifiers[Array.IndexOf(daysOfTheWeek, dayOfWeek)] * 16);
+        startTwo = (modifiers[Array.IndexOf(daysOfTheWeek, dayOfWeek)] * 20);
+        //Debug.Log("Acid Quantities are: " + startOne);
 
         #region Base Determining
 
         startingTime = (int)Info.GetTime();
-        int offset1 = Info.GetSerialNumber()[5], onInds = 0, offInds = 0;
+        int offset1 = Int32.Parse(""+ Info.GetSerialNumber()[5]), onInds = 0, offInds = 0;
+        //Debug.Log("Offset1 Init= " + offset1);
         foreach (string ind in Info.GetIndicators())
         {
-            if (ind.Any("GETALABCOAT".Contains))
+            
+            if (ind.Any("GEALBCOT".Contains))
             {
+                Debug.Log(ind);
                 offset1++;
                 if (Info.IsIndicatorOn(ind)) onInds++;
                 else offInds++;
+                //Debug.Log("Offset1 = " + offset1);
             }
         }
+        //Debug.Log("On/Off = " + onInds + "/" + offInds);
         for (int i = 0; i < onInds; i++)
         {
-            offset1 *= 2;
+            offset1 = offset1 * 2;
+            //Debug.Log("1");
+            //Debug.Log("Offset1 = " + offset1);
         }
         for (int i = 0; i < offInds; i++)
         {
-            offset1 -= 3;
+            offset1 = offset1 - 3;
+            //Debug.Log("0");
+            //Debug.Log("Offset1 = " + offset1);
         }
         offset1 = digitalRoot(offset1);//FINAL OFFSET 1
 
@@ -333,19 +356,22 @@ public class stoichiometryModule : MonoBehaviour {
 
         double firstAcidMoles = startOne / leftAcid.getMass(), secondAcidMoles = startTwo / rightAcid.getMass();
 
-        
+        Debug.LogFormat("L {0} / {1} = {2} mols",startOne,leftAcid.getMass(),firstAcidMoles);
+        Debug.LogFormat("R {0} / {1} = {2} mols", startTwo, rightAcid.getMass(), secondAcidMoles);
+
         leftSalt = reactions[Array.IndexOf(bases, leftBase), Array.IndexOf(acids, leftAcid)];
         rightSalt = reactions[Array.IndexOf(bases, rightBase), Array.IndexOf(acids, rightAcid)];
         rightToxic = rightSalt.isToxic(); rightGas = rightSalt.containsGas();
         leftToxic = leftSalt.isToxic(); leftGas = leftSalt.containsGas();
+
         double leftBaseGrams = leftSalt.getRatio() * firstAcidMoles * leftBase.getMass(),
             rightBaseGrams = rightSalt.getRatio() * secondAcidMoles * rightBase.getMass();
-        //Debug.LogFormat("L: {0} * {1} * {2} = {3} grams",leftSalt.getRatio(),firstAcidMoles,leftBase.getMass(),leftBaseGrams);
-        //Debug.LogFormat("L: {0} * {1} * {2} = {3} grams",rightSalt.getRatio(),secondAcidMoles,rightBase.getMass(),rightBaseGrams);
+        Debug.LogFormat("L: {0} * {1} * {2} = {3} grams",leftSalt.getRatio(),firstAcidMoles,leftBase.getMass(),leftBaseGrams);
+        Debug.LogFormat("R: {0} * {1} * {2} = {3} grams",rightSalt.getRatio(),secondAcidMoles,rightBase.getMass(),rightBaseGrams);
 
-        leftBaseDrops = (int)leftBaseGrams; rightBaseDrops = (int)rightBaseGrams;
+        leftBaseDrops = (int) Math.Ceiling(leftBaseGrams); rightBaseDrops = (int)Math.Ceiling(rightBaseGrams);
         if (leftBaseDrops == 0) leftBaseDrops++; if (rightBaseDrops == 0) rightBaseDrops++;
-
+        if (leftBaseDrops > 99) leftBaseDrops = 99; if (rightBaseDrops > 99) rightBaseDrops = 99;
         //Debug.LogFormat("{0} | {1}",leftBaseGrams,rightBaseGrams);
 
         string leftLogOne, leftLogTwo, rightLogOne, rightLogTwo;
@@ -386,6 +412,7 @@ public class stoichiometryModule : MonoBehaviour {
             default:
                 break;
         }
+
     }
 
     void handleDrop(int adder)
@@ -815,15 +842,15 @@ public class stoichiometryModule : MonoBehaviour {
     {
         private string salt;
         private bool liquid, toxic, gas;
-        private int ratio;
+        private double ratio;
 
-        public Reaction(string s, bool l, bool g, bool t, double r) { salt = s; liquid = l; gas = g; toxic = t; ratio = (int)Math.Round(r); }
+        public Reaction(string s, bool l, bool g, bool t, double r) { salt = s; liquid = l; gas = g; toxic = t; ratio = r; }
         public Reaction(string s, bool l, bool g, bool t) { salt = s; liquid = l; gas = g; toxic = t; ratio = 1; }
         public string getSalt() { return salt; }
         public bool containsLiquid() { return liquid; }
         public bool containsGas() { return gas; }
         public bool isToxic() { return toxic; }
-        public int getRatio() { return ratio; }
+        public double getRatio() { return ratio; }
         public bool isEqual(Reaction other) {return (other.getSalt().Equals(salt));}
     }
 
@@ -983,7 +1010,7 @@ public class stoichiometryModule : MonoBehaviour {
     bool moreBatsThanHold(){return (Info.GetBatteryCount()>Info.GetBatteryHolderCount());}
     bool moreOffThanOnInd(){return (Info.GetOnIndicators().Count() > Info.GetOffIndicators().Count());}
     bool morePortsThanPlates(){return (Info.GetPortCount() > Info.GetPortPlateCount());}
-    bool dBatPresent(){return (Info.GetBatteryHolderCount() == (Info.GetBatteryCount()/2));}
+    bool dBatPresent(){return (Info.GetBatteryHolderCount() != (Info.GetBatteryCount()/2));}
     bool litBOBpresent(){return (Info.IsIndicatorPresent("BOB") && Info.IsIndicatorOn("BOB"));}
     bool vowelInSerial(){return (Info.GetSerialNumberLetters().Contains('A')|| Info.GetSerialNumberLetters().Contains('E')|| 
             Info.GetSerialNumberLetters().Contains('I')|| Info.GetSerialNumberLetters().Contains('O')|| 
@@ -1033,6 +1060,5 @@ public class stoichiometryModule : MonoBehaviour {
 
         return false;
     }
-
     #endregion
 }
