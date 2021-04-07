@@ -108,25 +108,25 @@ public class stoichiometryModule : MonoBehaviour {
         startingTime = (int)Info.GetTime();
         tenDropTravel[0].OnInteract += delegate ()
         {
-            tenDropTravel[0].AddInteractionPunch();
+            
             handleDrop(-10);
             return false;
         };
         tenDropTravel[1].OnInteract += delegate ()
         {
-            tenDropTravel[1].AddInteractionPunch();
+            
             handleDrop(10);
             return false;
         };
         oneDropTravel[0].OnInteract += delegate ()
         {
-            oneDropTravel[0].AddInteractionPunch();
+            
             handleDrop(-1);
             return false;
         };
         oneDropTravel[1].OnInteract += delegate ()
         {
-            oneDropTravel[1].AddInteractionPunch();
+            
             handleDrop(1);
             return false;
         };
@@ -160,25 +160,25 @@ public class stoichiometryModule : MonoBehaviour {
         };
         rVent.OnInteract += delegate ()
         {
-            rVent.AddInteractionPunch();
+            
             handleRightVent();
             return false;
         };
         lVent.OnInteract += delegate ()
         {
-            lVent.AddInteractionPunch();
+            
             handleLeftVent();
             return false;
         };
         rFilter.OnInteract += delegate ()
         {
-            rFilter.AddInteractionPunch();
+            
             handleRightFilter();
             return false;
         };
         lFilter.OnInteract += delegate ()
         {
-            lFilter.AddInteractionPunch();
+            
             handleLeftFilter();
             return false;
         };
@@ -324,7 +324,7 @@ public class stoichiometryModule : MonoBehaviour {
         }
 
         while (secondBase < 0) { secondBase += 8; }
-        Debug.LogFormat("[Stoichiometry #{6}] Left Base Position {0}+{1}={2}, Right Base Position {3}-{4}={5}", colorLogOne, offset1, firstBase, colorLogTwo, offset2, secondBase, _moduleId);
+        Debug.LogFormat("[Stoichiometry #{6}] Left Base Position {0} + {1} = {2}, Right Base Position {3} - {4} = {5}.", colorLogOne, offset1, firstBase, colorLogTwo, offset2, secondBase, _moduleId);
 
         leftBase = bases[firstBase];
         rightBase = bases[secondBase];
@@ -386,12 +386,6 @@ public class stoichiometryModule : MonoBehaviour {
             default:
                 break;
         }
-
-        
-
-        
-
-
     }
 
     void handleDrop(int adder)
@@ -579,7 +573,7 @@ public class stoichiometryModule : MonoBehaviour {
     {
         if (_isSolved | !_lightsOn) return;
         Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, Module.transform);
-        precipitateButton.AddInteractionPunch();
+        
         if (!currentDisplay) {
             toggleDisplay.text = "BASES";
             if (!whichBase)
@@ -613,8 +607,6 @@ public class stoichiometryModule : MonoBehaviour {
         
         if (!_lightsOn || _isSolved) return;
         Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, Module.transform);
-        if (i == 0) baseTravel[0].AddInteractionPunch();
-        else baseTravel[1].AddInteractionPunch();
         //whichBase represents either a 0 or 1. 0 is base one, 1 is base two. I understand, it's weird, but it works.
         if (currentDisplay)//travel to bases
         {
@@ -651,7 +643,7 @@ public class stoichiometryModule : MonoBehaviour {
     void handleBaseToggle()
     {
         if (!_lightsOn || _isSolved || halfSolved) return;
-        baseToggle.AddInteractionPunch();
+        
         Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, Module.transform);
         if (currentDisplay)
         {
@@ -837,6 +829,9 @@ public class stoichiometryModule : MonoBehaviour {
 
     #endregion
 
+    #region Color Methods
+
+    
     string calcColor(int[] rgb)
     {
         string s = "";
@@ -935,15 +930,15 @@ public class stoichiometryModule : MonoBehaviour {
         return 0;
          
     }
-    
-
+    #endregion
 
     //the following data structure is used to traverse the graph/flowchart present on the module
     //each node will have two destinations: yes and no
     //each node will have two strings: one for logging, the other to check if it is an end piece
     //end pieces contain a mixture, non-end pieces have this data as null
 
-    class Node{
+    class Node
+    {
         private string label;
         private char endLabel;
         private Node yes, no;
