@@ -1066,4 +1066,76 @@ public class stoichiometryModule : MonoBehaviour {
         return false;
     }
     #endregion
+
+    #region Twitch Plays Code
+#pragma warning disable 414
+    private readonly string TwitchHelpMessage = @"Use [!{0} set base NaHCO3] to set NaHCO₃ as your base. Use [!{0} set salt NaC2H3O2] to set NaC₂H₃O₂ as prepared salt. Use [!{0} set drops 12] to set the drop count to 12. Use [!{0} toggle] to switch the display between red and blue. Use [!{0} vent/filter left/right] to toggle the vent or filter on that side of the module. Use [!{0} titrate] to press the titrate button. Use [!{0} titrate at ##] to press the titrate when the seconds digits of the timer say ##.";
+#pragma warning restore 414
+
+    IEnumerator ProcessTwitchCommand(string input)
+    {
+        string[] bases = { "NAOH", "NAHCO3", "KOH", "NH3", "LIOH", "LIC4H9", "NANH2", "MG(OH)2"};
+        string[] salts = { "CHEGG" };
+        string command = input.Trim().ToUpperInvariant();
+        List<string> parameters = command.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).ToList();
+        if (parameters.First() == "TITRATE" || parameters.First() == "SUBMIT")
+        {
+            parameters.Remove(parameters.First());
+            if (parameters.Count == 0)
+            { //If it's just titrate, just press the button. If not, we need to do some additional parsing.
+                yield return null;
+                titrateButton.OnInteract();
+                yield return new WaitForSeconds(0.1f);
+            }
+            else if (parameters.Count == 2 && parameters[0] == "AT" && parameters[1].Length == 2 && parameters[1].All(x => "0123456789".Contains(x)))
+            {
+                yield return null;
+                while (((int)Info.GetTime() % 60).ToString().PadLeft(2, '0') == parameters[1])
+                    yield return "trycancel"; //Prevents an obscure bug with the TP handler.
+                while (((int)Info.GetTime() % 60).ToString().PadLeft(2, '0') != parameters[1])
+                    yield return "trycancel";
+                titrateButton.OnInteract();
+                yield return new WaitForSeconds(0.1f);
+            }
+            else yield return "sendtochaterror Improper formatting of timed titration command.";
+        }
+
+        else if (command == "TOGGLE")
+            baseToggle.OnInteract();
+        else if (parameters.First() == "SET" && parameters.Count == 3)
+        {
+            parameters.Remove("SET");
+            if (parameters.First() == "BASE" && bases.Contains(parameters.Last()))
+            {
+                yield return null;
+                if (!currentDisplay)
+                    precipitateButton.OnInteract();
+                int targetIndex = Array.IndexOf(bases, parameters.Last());
+                KMSelectable whichButton = (Math.Abs((whichBase ? baseTwoIndex : baseOneIndex) - targetIndex) > 4) ? baseTravel[0] : baseTravel[1];
+                while ((whichBase ? baseTwoIndex : baseOneIndex) != targetIndex)
+                {
+                    whichButton.OnInteract();
+                    yield return new WaitForSeconds(0.1f);
+                }
+            }
+            else if (parameters.First() == "SALT" && salts.Contains(parameters.Last()))
+            {
+                yield return null;
+                if (currentDisplay)
+                    precipitateButton.OnInteract();
+                int targetIndex = Array.IndexOf(salts, parameters.Last());
+                KMSelectable whichButton = (Math.Abs((whichBase ? baseTwoIndex : baseOneIndex) - targetIndex) > 4) ? baseTravel[0] : baseTravel[1];
+                while ((whichBase ? baseTwoIndex : baseOneIndex) != targetIndex)
+                {
+                    whichButton.OnInteract();
+                    yield return new WaitForSeconds(0.1f);
+                }
+            }
+            else if (parameters.First() == "DROPS" && parameters.Last().All(x => "1234567890".Contains(x)) && parameters.Last().Length <= 2)
+            {
+                yield return null;
+            }
+        }
+    }
+    #endregion
 }
