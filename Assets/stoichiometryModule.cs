@@ -12,9 +12,10 @@ public class stoichiometryModule : MonoBehaviour {
     public KMAudio Audio;
     public KMBombModule Module;
     public KMBombInfo Info;
+    public KMColorblindMode Colorblind;
     public KMSelectable titrateButton, precipitateButton, baseToggle, rVent, rFilter, lVent, lFilter;
     public GameObject centralVial, leftLight, rightLight;
-    public TextMesh baseDisplay, toggleDisplay;
+    public TextMesh baseDisplay, toggleDisplay, cbText;
     public TextMesh[] dropDisplays = new TextMesh[2]; //0 is left, 1 is right
     public KMSelectable[] baseTravel, tenDropTravel, oneDropTravel;
     public Material red, blue, green, cyan, yellow, magenta, black, white, grey, lightOn, lightOff;
@@ -91,13 +92,22 @@ public class stoichiometryModule : MonoBehaviour {
     private double[] modifiers = { (double)1/2,(double)3/2,(double)7/5,(double)40/20, (double)9/4, 1, (double)13/16};
     
     private double startOne, startTwo;
-    
+
+    string submittingBase; 
+    string submittingSalt;
+    int correctBaseIndex;       //These variables are all for the TP autosolver
+    int correctSaltIndex;
+    int correctDrops;
+
+    bool CBON;
 
     // Use this for initialization
     #region Start, Awake, and Activate
-    void Start () {
+    void Start ()
+    {
         _moduleId = _moduleIdCounter++;
         Module.OnActivate += Activate;
+        if (Colorblind.ColorblindModeActive) CBON = true;
 	}
 
     
@@ -207,6 +217,7 @@ public class stoichiometryModule : MonoBehaviour {
         Material centreFinal = stringColor(calcColor(centreColor));
         centralVial.GetComponent<Renderer>().material = centreFinal;
         string centralColor = calcColor(centreColor);
+        SetCB();
         int centralDegree = colorDegree(centralColor);
         int firstBase, secondBase;
 
@@ -451,11 +462,14 @@ public class stoichiometryModule : MonoBehaviour {
         {
             int molMass = (int) thisNode.getMix().getMass();
             if (molMass >= 60) { molMass = digitalRoot(molMass); }
-            if (seconds == molMass) { Module.HandlePass();
+            if (seconds == molMass)
+            {
+                Module.HandlePass();
                 Audio.PlaySoundAtTransform("solve", Module.transform);
                 Debug.LogFormat("[Stoichiometry #{0}] AzidoAzideAzide neutralized! That was pretty easy! Solving Module.",_moduleId);
                 Audio.PlaySoundAtTransform("solve", Module.transform);
                 centralVial.GetComponent<Renderer>().material = grey;
+                cbText.text = string.Empty;
                 baseDisplay.color = Color.black;
                 _isSolved = true;
             }
@@ -503,6 +517,7 @@ public class stoichiometryModule : MonoBehaviour {
                         {
                             Debug.LogFormat("[Stoichiometry #{0}] Second Acid Neutralized. The Module is solved. {1}",_moduleId,solveFluff);
                             Module.HandlePass();
+                            cbText.text = string.Empty;
                             Audio.PlaySoundAtTransform("solve",Module.transform);
                             centralVial.GetComponent<Renderer>().material = grey;
                             baseDisplay.color = Color.black;
@@ -606,6 +621,16 @@ public class stoichiometryModule : MonoBehaviour {
             Module.HandleStrike();
             Debug.LogFormat("[Stoichiometry #{0}] Submitted Base ({1}) was not relevant to either solution. Issuing Strike.",_moduleId, currentBase.getName());
         }
+    }
+    void SetCB()
+    {
+        string currentCol = centralVial.GetComponent<Renderer>().material.name.Split(' ').First(); //If I don't include the .Split and .First, the text ends up with "(Instance)" after it.
+        if (currentCol == "lightOn" || currentCol == "lightOff")                                   //I am very mildly peeved that you don't use an int[] for the colors. Expect several angry work emails >:(                                
+            return;
+        if (CBON && currentCol != "black" && currentCol != "white" && currentCol != "grey") //We don't need colorblind support for these colors! They aren't even real! Ha!
+            cbText.text = currentCol;
+        else
+            cbText.text = string.Empty;
     }
 
     bool assessUnicorn() { return (Info.GetBatteryHolderCount() == 1 && Info.GetBatteryCount() == 2 && Info.IsIndicatorPresent("FRK") && Info.IsIndicatorOn("FRK")); }
@@ -1092,6 +1117,204 @@ public class stoichiometryModule : MonoBehaviour {
         }
 
         return false;
+    }
+    #endregion
+
+    #region Twitch Plays Code
+#pragma warning disable 414
+    private readonly string TwitchHelpMessage = @"Use [!{0} set base NaHCO3] to set NaHCO₃ as your base. Use [!{0} set salt Mg(OTf)2] to set Mg(OTf)₂ as the prepared salt. Use [!{0} set drops 12] to set the drop count to 12. Use [!{0} toggle] to switch the display between red and blue. Use [!{0} vent/filter left/right] to toggle the vent or filter on that side of the module. Use [!{0} titrate] to press the titrate button. Use [!{0} titrate at ##] to press the titrate when the seconds digits of the timer say  Use [!{0} colorblind] to toggle colorblind mode.";
+#pragma warning restore 414
+
+    string[] GenerateSalts() //Helper method used for getting the salt list for the selected base.
+    {
+        string[] output = new string[10];
+        int chosenIndex = (!whichBase) ? baseOneIndex : baseTwoIndex;
+        for (int i = 0; i < 10; i++)
+        {
+            output[i] = reactions[chosenIndex, i].getSalt();
+        }
+        return output;
+    }
+    string RemoveSubscripts(string input)
+    {
+        return input.ToUpperInvariant().Replace('₂', '2').Replace('₃', '3').Replace('₄', '4');
+    }
+
+    IEnumerator ProcessTwitchCommand(string input)
+    {
+        string[] bases = { "NAOH", "NAHCO3", "KOH", "NH3", "LIOH", "LIC4H9", "NANH2", "MG(OH)2"};
+        string command = input.Trim().ToUpperInvariant();
+        List<string> parameters = command.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).ToList();
+        if (parameters.First() == "TITRATE" || parameters.First() == "SUBMIT")
+        {
+            parameters.Remove(parameters.First());
+            if (parameters.Count == 0)
+            { //If it's just titrate, just press the button. If not, we need to do some additional parsing.
+                yield return null;
+                titrateButton.OnInteract();
+                yield return new WaitForSeconds(0.1f);
+            }
+            else if (parameters.Count == 2 && parameters[0] == "AT" && parameters[1].Length == 2 && parameters[1].All(x => "0123456789".Contains(x)))
+            {
+                yield return null;
+                while (((int)Info.GetTime() % 60).ToString().PadLeft(2, '0') == parameters[1])
+                    yield return "trycancel"; //Prevents an obscure bug with the TP handler.
+                while (((int)Info.GetTime() % 60).ToString().PadLeft(2, '0') != parameters[1])
+                    yield return "trycancel";
+                titrateButton.OnInteract();
+                yield return new WaitForSeconds(0.1f);
+            }
+            else yield return "sendtochaterror Improper formatting of timed titration command.";
+        }
+        else if (command == "COLORBLIND" || command == "COLOURBLIND" || command == "CB")
+        {
+            yield return null;
+            CBON = !CBON;
+            SetCB();
+        }
+        else if (command == "TOGGLE")
+            baseToggle.OnInteract();
+        else if (parameters.Count == 2 && (parameters[0] == "VENT" || parameters[0] == "FILTER") && (parameters[1] == "LEFT" || parameters[1] == "RIGHT"))
+        {
+            yield return null;
+            KMSelectable[,] safetyThings = new KMSelectable[,] //Probably one of the weirder ways I've accessed a bunch of buttons.
+               { { lFilter, rFilter }, {lVent, rVent } };      //Since each of the KMSelectables is individually assigned, I'm pretty much putting them into their own private array here.
+            safetyThings[(parameters[0] == "FILTER") ? 0 : 1, (parameters[1] == "LEFT") ? 0 : 1].OnInteract();
+            yield return new WaitForSeconds(0.1f);
+        }
+        else if (parameters.First() == "SET" && parameters.Count == 3)
+        {
+            parameters.Remove("SET");
+            if (parameters.First() == "BASE" && bases.Contains(parameters.Last()))
+            {
+                yield return null;
+                if (!currentDisplay)
+                    precipitateButton.OnInteract();
+                int targetIndex = Array.IndexOf(bases, RemoveSubscripts(parameters.Last()));
+                KMSelectable whichButton = (Math.Abs((whichBase ? baseTwoIndex : baseOneIndex) - targetIndex) < 4) ? baseTravel[0] : baseTravel[1];
+                while ((whichBase ? baseTwoIndex : baseOneIndex) != targetIndex)
+                {
+                    whichButton.OnInteract();
+                    yield return new WaitForSeconds(0.1f);
+                }
+            }
+            else if (parameters.First() == "SALT" && GenerateSalts().Select(x => RemoveSubscripts(x)).Contains(parameters.Last()))
+            {
+                yield return null;
+                if (currentDisplay)
+                    precipitateButton.OnInteract();
+                int targetIndex = Array.IndexOf(GenerateSalts().Select(x => RemoveSubscripts(x)).ToArray(), RemoveSubscripts(parameters.Last()));
+                if (targetIndex == -1)
+                    yield return "sendtochaterror Invalid salt entered.";
+                KMSelectable whichButton = (Math.Abs((whichBase ? baseTwoIndex : baseOneIndex) - targetIndex) < 5) ? baseTravel[0] : baseTravel[1];
+                while ((whichBase ? saltTwoIndex : saltOneIndex) != targetIndex)
+                {
+                    whichButton.OnInteract();
+                    yield return new WaitForSeconds(0.1f);
+                }
+            }
+            else if (parameters.First() == "DROPS" && parameters.Last().All(x => "1234567890".Contains(x)) && parameters.Last().Length <= 2)
+            {
+                yield return null;
+                int inputted = int.Parse(parameters.Last());
+                KMSelectable whichTens = (drops / 10 > inputted / 10) ? tenDropTravel[0] : tenDropTravel[1];
+                KMSelectable whichOnes = (drops % 10 > inputted % 10) ? oneDropTravel[0] : oneDropTravel[1];
+                while (inputted / 10 != drops / 10)
+                {
+                    whichTens.OnInteract();
+                    yield return new WaitForSeconds(0.1f);
+                }
+                while (inputted % 10 != drops % 10)
+                {
+                    whichOnes.OnInteract();
+                    yield return new WaitForSeconds(0.1f);
+                }
+            }
+        }
+    }
+
+    void SetAutosolverVars()
+    {
+        submittingBase = (halfSolved && nextAcid == rightAcid) ? rightBase.getSymbol() : leftBase.getSymbol();
+        submittingSalt = (halfSolved && nextAcid == rightAcid) ? rightSalt.getSalt() : leftSalt.getSalt();
+        correctBaseIndex = Array.IndexOf(bases.Select(x => x.getSymbol()).ToArray(), submittingBase);
+        correctSaltIndex = Array.IndexOf(GenerateSalts(), submittingSalt);
+        correctDrops = (halfSolved && nextAcid == rightAcid) ? rightBaseDrops : leftBaseDrops;
+    }
+    IEnumerator TwitchHandleForcedSolve()
+    {
+        if (unicorn)
+        {
+            int molMass = (int)thisNode.getMix().getMass();
+            if (molMass >= 60) molMass = digitalRoot(molMass);
+            while ((int)Info.GetTime() % 60 != molMass)
+                yield return true;
+            titrateButton.OnInteract();
+            yield break;
+        }
+        SubmittingLeft:
+        if (halfSolved && nextAcid == rightAcid)
+            goto SubmittingRight;
+        if (leftVent ^ leftGas)
+        {
+            lVent.OnInteract();
+            yield return new WaitForSeconds(0.1f);
+        }
+        if (leftFilter ^ leftToxic)
+        {
+            lFilter.OnInteract();
+            yield return new WaitForSeconds(0.1f);
+        }
+        SubmittingRight:
+        if (halfSolved && nextAcid == leftAcid)
+            goto SubmittingLeft;
+        if (rightVent ^ rightGas)
+        {
+            rVent.OnInteract();
+            yield return new WaitForSeconds(0.1f);
+        }
+        if (rightFilter ^ rightToxic)
+        {
+            rFilter.OnInteract();
+            yield return new WaitForSeconds(0.1f);
+        }
+        yield return null;
+
+        SetAutosolverVars();
+        if (!currentDisplay) precipitateButton.OnInteract();
+        KMSelectable whichBaseButton = (Math.Abs((whichBase ? baseOneIndex : baseTwoIndex) - correctBaseIndex) > 4) ? baseTravel[0] : baseTravel[1];
+        while ((whichBase ? baseTwoIndex : baseOneIndex) != correctBaseIndex)
+        {
+            whichBaseButton.OnInteract();
+            yield return new WaitForSeconds(0.1f);
+        }
+        SetAutosolverVars();
+        if (currentDisplay) precipitateButton.OnInteract();
+        KMSelectable whichSaltButton = (Math.Abs((whichBase ? baseOneIndex : saltTwoIndex) - correctSaltIndex) > 5) ? baseTravel[0] : baseTravel[1];
+        Debug.Log(correctSaltIndex);
+        Debug.Log((whichBase ? saltTwoIndex : saltOneIndex));
+        while ((whichBase ? saltTwoIndex : saltOneIndex) != correctSaltIndex)
+        {
+            whichBaseButton.OnInteract();
+            yield return new WaitForSeconds(0.1f);
+        }
+
+        KMSelectable whichTens = (drops / 10 > correctDrops / 10) ? tenDropTravel[0] : tenDropTravel[1];
+        KMSelectable whichOnes = (drops % 10 > correctDrops % 10) ? oneDropTravel[0] : oneDropTravel[1];
+        while (correctDrops / 10 != drops / 10)
+        {
+            whichTens.OnInteract();
+            yield return new WaitForSeconds(0.1f);
+        }
+        while (correctDrops % 10 != drops % 10)
+        {
+            whichOnes.OnInteract();
+            yield return new WaitForSeconds(0.1f);
+        }
+        titrateButton.OnInteract();
+        yield return new WaitForSeconds(0.2f);
+        if (_isSolved) yield break;
+        if (halfSolved) goto SubmittingLeft;
     }
     #endregion
 }
