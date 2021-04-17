@@ -31,7 +31,7 @@ public class stoichiometryModule : MonoBehaviour {
         leftBaseDrops, rightBaseDrops;
     private bool _lightsOn = false, _isSolved = false, whichBase = false, currentDisplay = true,
         leftVent = false, rightVent = false, leftFilter = false, rightFilter = false, unicorn = false, 
-        rightToxic, leftToxic, rightGas, leftGas, halfSolved = false;
+        rightToxic, leftToxic, rightGas, leftGas, halfSolved = false, amogus = false;
     //currentDisplay = (0 for Bases, 1 for Salts)
     //private int[] leftRGB = new int[3], rightRBG = new int[3], centreRBG= new int[3];
     private Color lightRed = new Color(1, 0.796f, 0.796f, 1), lightBlue = new Color(0.796f, 0.796f, 1,1);
@@ -42,7 +42,7 @@ public class stoichiometryModule : MonoBehaviour {
         new Mixture("HCl",36.458,"","Hydrochloric Acid"),//E
         new Mixture("HF",20.006,"","Hydroflouric Acid"),//A
         new Mixture("HBr",80.912,"","Hydrogen Bromide"),//F
-        new Mixture("HC₂H₃O₂",59.044,"","Acetic Acid"),//I
+        new Mixture("HC₂H₃O₂",60.052,"","Acetic Acid"),//I
         new Mixture("CF₃SO₃H",150.07,"","Triflic Acid"),//J
         new Mixture("HNO₃",63.012,"","Nitric Acid"),//C
         new Mixture("H₂CO₃",62.024,"","Carbonic Acid"),//G
@@ -55,7 +55,7 @@ public class stoichiometryModule : MonoBehaviour {
         new Mixture ("NH₃",17.031,"gb","Ammonia"),
         new Mixture("LiOH",23.947,"rb","Lithium Hydroxide"),
         new Mixture("LiC₄H₉",64.056,"rg","ButyLithium"),
-        new Mixture("NaNH₂",39.013,"k","Sodium Amide"), //k denotes that the mixture is entirely black, if the string is ever a size of 0 it should default to k
+        new Mixture("NaH",23.998,"k","Sodium Hydride"), //k denotes that the mixture is entirely black, if the string is ever a size of 0 it should default to k
         new Mixture("Mg(OH)₂",58.319,"rgb","Magnesium Hydroxide")
     };
     
@@ -417,6 +417,15 @@ public class stoichiometryModule : MonoBehaviour {
                 break;
         }
 
+        //possible Souvenir answer generation
+        int[] notDrops = new int[3];
+        int f = Random.Range(1, 100); while (f == leftBaseDrops || f == rightBaseDrops) { f = Random.Range(1, 100); }
+        int j = Random.Range(1, 100); while (j == leftBaseDrops || j == rightBaseDrops || j == f) { j = Random.Range(1, 100); }
+        int k = Random.Range(1, 100); while (k == leftBaseDrops || k == rightBaseDrops || k == f || k == j) { j = Random.Range(1, 100); }
+        notDrops[0] = f; notDrops[1] = f; notDrops[2] = k;
+
+        
+
     }
 
     void handleDrop(int adder)
@@ -599,10 +608,10 @@ public class stoichiometryModule : MonoBehaviour {
         }
     }
 
-    bool assessUnicorn()
-    {
-        return (Info.GetBatteryHolderCount() == 1 && Info.GetBatteryCount() == 2 && Info.IsIndicatorPresent("FRK") && Info.IsIndicatorOn("FRK"));
-    }
+    bool assessUnicorn() { return (Info.GetBatteryHolderCount() == 1 && Info.GetBatteryCount() == 2 && Info.IsIndicatorPresent("FRK") && Info.IsIndicatorOn("FRK")); }
+    bool assessAmogus() { return (Info.GetSolvableModuleNames().Contains("The Imposter") || Info.GetSolvableModuleNames().Contains("amogus") 
+            || Info.GetSolvableModuleNames().Contains("Among Us"));}
+
     void handlePrecipitate()
     {
         if (_isSolved | !_lightsOn) return;
@@ -723,6 +732,13 @@ public class stoichiometryModule : MonoBehaviour {
     #region Filters and Vents
     void handleLeftVent()
     {
+        if (amogus && _isSolved) {
+            int fileNum = Random.Range(1, 4);
+            string filename = "vent" + fileNum;
+            Audio.PlaySoundAtTransform(filename,lVent.transform);
+            return;
+            }
+
         if (_isSolved || !_lightsOn) return;
         leftVent = !leftVent;
         float flapRotate = 0.0f;
@@ -741,6 +757,13 @@ public class stoichiometryModule : MonoBehaviour {
     }
     void handleRightVent()
     {
+        if (amogus && _isSolved)
+        {
+            int fileNum = Random.Range(1, 4);
+            string filename = "vent" + fileNum;
+            Audio.PlaySoundAtTransform(filename, lVent.transform);
+            return;
+        }
         if (_isSolved || !_lightsOn) return;
         rightVent = !rightVent;
         float flapRotate = 0.0f;
@@ -834,6 +857,11 @@ public class stoichiometryModule : MonoBehaviour {
         { return color; }
         public string getName()
         { return name; }
+
+        public override string ToString()
+        {
+            return "[" + name + ", " + symbol + "][M = " + mass + "]";
+        }
         
         
         public bool isEqual(Mixture other)
