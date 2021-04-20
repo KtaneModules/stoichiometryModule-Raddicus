@@ -16,6 +16,6 @@ MonoBehaviour:
   author: Raddicus, OEGamer, Bioplay, LuminosityTim
   description: Neutralize two acids and account for their reactions by calculating
     salts and possible gas byproducts.
-  version: 1.33
+  version: 1.35
   outputFolder: build
   previewImage: {fileID: 2800000, guid: 852b3bd8b824c0a46b9503c9929149ec, type: 3}

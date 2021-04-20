@@ -305,6 +305,10 @@ public class stoichiometryModule : MonoBehaviour {
             //Debug.Log("0");
             //Debug.Log("Offset1 = " + offset1);
         }
+
+        //negative offset clause
+        if (offset1 < 0) offset1 = Math.Abs(offset1);
+
         offset1 = digitalRoot(offset1);//FINAL OFFSET 1
 
         int offset2 = Info.GetSerialNumberNumbers().ToArray()[0] * Info.GetPortCount();
@@ -522,6 +526,7 @@ public class stoichiometryModule : MonoBehaviour {
                             centralVial.GetComponent<Renderer>().material = grey;
                             baseDisplay.color = Color.black;
                             _isSolved = true;
+                            assessAmogus();
                         }
                         else
                         {
@@ -1142,7 +1147,7 @@ public class stoichiometryModule : MonoBehaviour {
 
     IEnumerator ProcessTwitchCommand(string input)
     {
-        string[] bases = { "NAOH", "NAHCO3", "KOH", "NH3", "LIOH", "LIC4H9", "NANH2", "MG(OH)2"};
+        string[] bases = { "NAOH", "NAHCO3", "KOH", "NH3", "LIOH", "LIC4H9", "NAH", "MG(OH)2"};
         string command = input.Trim().ToUpperInvariant();
         List<string> parameters = command.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).ToList();
         if (parameters.First() == "TITRATE" || parameters.First() == "SUBMIT")
