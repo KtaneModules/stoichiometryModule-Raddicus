@@ -1169,8 +1169,12 @@ public class stoichiometryModule : MonoBehaviour {
                 titrateButton.OnInteract();
                 yield return new WaitForSeconds(0.1f);
             }
-            else yield return "sendtochaterror Improper formatting of timed titration command.";
-        }
+            else 
+	    {
+	    	yield return "sendtochaterror Improper formatting of timed titration command.";
+	    	yield break;
+	    }
+    }
         else if (command == "COLORBLIND" || command == "COLOURBLIND" || command == "CB")
         {
             yield return null;
@@ -1210,8 +1214,11 @@ public class stoichiometryModule : MonoBehaviour {
                     precipitateButton.OnInteract();
                 int targetIndex = Array.IndexOf(GenerateSalts().Select(x => RemoveSubscripts(x)).ToArray(), RemoveSubscripts(parameters.Last()));
                 if (targetIndex == -1)
+		{	
                     yield return "sendtochaterror Invalid salt entered.";
-                KMSelectable whichButton = (Math.Abs((whichBase ? baseTwoIndex : baseOneIndex) - targetIndex) < 5) ? baseTravel[0] : baseTravel[1];
+	            yield break;
+		}
+	    	KMSelectable whichButton = (Math.Abs((whichBase ? baseTwoIndex : baseOneIndex) - targetIndex) < 5) ? baseTravel[0] : baseTravel[1];
                 while ((whichBase ? saltTwoIndex : saltOneIndex) != targetIndex)
                 {
                     whichButton.OnInteract();
