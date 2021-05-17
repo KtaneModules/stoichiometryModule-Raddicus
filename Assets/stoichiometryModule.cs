@@ -1094,7 +1094,7 @@ public class stoichiometryModule : MonoBehaviour {
 
     #region Twitch Plays Code
 #pragma warning disable 414
-    private readonly string TwitchHelpMessage = @"Use [!{0} set base NaHCO3] to set NaHCO₃ as your base. Use [!{0} set salt Mg(OTf)2] to set Mg(OTf)₂ as the prepared salt. Use [!{0} set drops 12] to set the drop count to 12. Use [!{0} toggle] to switch the display between red and blue. Use [!{0} vent/filter left/right] to toggle the vent or filter on that side of the module. Use [!{0} titrate] to press the titrate button. Use [!{0} titrate at ##] to press the titrate when the seconds digits of the timer say  Use [!{0} colorblind] to toggle colorblind mode.";
+    private readonly string TwitchHelpMessage = @"Use [!{0} set base NaHCO3] to set NaHCO₃ as your base. Use [!{0} set salt Mg(OTf)2] to set Mg(OTf)₂ as the prepared salt. Use [!{0} set drops 12] to set the drop count to 12. Use [!{0} toggle] to switch the display between red and blue. Use [!{0} vent/filter left/right] to toggle the vent or filter on that side of the module. Use [!{0} cycle] to cycle the salts available. Use [!{0} titrate] to press the titrate button. Use [!{0} titrate at ##] to press the titrate when the seconds digits of the timer say  Use [!{0} colorblind] to toggle colorblind mode.";
 #pragma warning restore 414
 
     string[] GenerateSalts() //Helper method used for getting the salt list for the selected base.
@@ -1102,9 +1102,7 @@ public class stoichiometryModule : MonoBehaviour {
         string[] output = new string[10];
         int chosenIndex = (!whichBase) ? baseOneIndex : baseTwoIndex;
         for (int i = 0; i < 10; i++)
-        {
             output[i] = reactions[chosenIndex, i].getSalt();
-        }
         return output;
     }
     string RemoveSubscripts(string input)
@@ -1145,7 +1143,29 @@ public class stoichiometryModule : MonoBehaviour {
             SetCB();
         }
         else if (command == "TOGGLE")
+        {
+            yield return null;
             baseToggle.OnInteract();
+        }
+        else if (command == "CYCLE")
+        {
+            bool startedOnBase = false;
+            yield return null;
+            if (currentDisplay)
+            {
+                startedOnBase = true;
+                precipitateButton.OnInteract();
+                yield return new WaitForSeconds(0.5f);
+            }
+            for (int i = 0; i < 10; i++)
+            {
+                baseTravel[1].OnInteract();
+                yield return "trycancel";
+                yield return new WaitForSeconds(0.75f);
+            }
+            if (startedOnBase)
+                precipitateButton.OnInteract();
+        }
         else if (parameters.Count == 2 && (parameters[0] == "VENT" || parameters[0] == "FILTER") && (parameters[1] == "LEFT" || parameters[1] == "RIGHT"))
         {
             yield return null;
