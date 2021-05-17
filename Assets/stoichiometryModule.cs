@@ -27,7 +27,7 @@ public class stoichiometryModule : MonoBehaviour {
 
     private delegate bool thisCondition(); //this delegate does not require input since it can access the KMBombInfo object
     //List<thisCondition> conditionalArray = new List<thisCondition>();
-    private int _moduleId, _moduleIdCounter = 0;
+    private int _moduleId, _moduleIdCounter = 1;
     private int drops=0, baseOneIndex, baseTwoIndex, saltOneIndex, saltTwoIndex, startingTime, timeDif,
         leftBaseDrops, rightBaseDrops;
     private bool _lightsOn = false, _isSolved = false, whichBase = false, currentDisplay = true,
@@ -1102,7 +1102,7 @@ public class stoichiometryModule : MonoBehaviour {
     }
     bool oddBatt(){return (Info.GetBatteryCount() % 2 == 1);}
     bool moreDigThanLet() {return (Info.GetSerialNumberNumbers().Count() >= Info.GetSerialNumberLetters().Count());}
-    bool modMoreThanTime(){return (Int32.Parse(Info.GetFormattedTime().Substring(0, 2)) < Info.GetModuleNames().Count());}
+    bool modMoreThanTime(){return (Info.GetTime() < Info.GetSolvableModuleNames().Count());}
     bool forgetPresent()
     {
         bool presented = false;
