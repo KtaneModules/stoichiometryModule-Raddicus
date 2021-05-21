@@ -1102,7 +1102,7 @@ public class stoichiometryModule : MonoBehaviour {
     }
     bool oddBatt(){return (Info.GetBatteryCount() % 2 == 1);}
     bool moreDigThanLet() {return (Info.GetSerialNumberNumbers().Count() >= Info.GetSerialNumberLetters().Count());}
-    bool modMoreThanTime(){return (Info.GetTime() < Info.GetSolvableModuleNames().Count());}
+    bool modMoreThanTime(){return (Info.GetTime() / 60 < Info.GetSolvableModuleNames().Count());}
     bool forgetPresent()
     {
         bool presented = false;
