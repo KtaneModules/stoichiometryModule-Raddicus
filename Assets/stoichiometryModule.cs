@@ -15,7 +15,7 @@ public class stoichiometryModule : MonoBehaviour {
     public KMColorblindMode Colorblind;
     public KMSelectable titrateButton, precipitateButton, baseToggle, rVent, rFilter, lVent, lFilter;
     public GameObject centralVial, leftLight, rightLight;
-    public TextMesh baseDisplay, toggleDisplay, cbText;
+    public TextMesh baseDisplay, toggleDisplay, cbText, redOn, blueOn;
     public TextMesh[] dropDisplays = new TextMesh[2]; //0 is left, 1 is right
     public KMSelectable[] baseTravel, tenDropTravel, oneDropTravel;
     public Material red, blue, green, cyan, yellow, magenta, black, white, grey, lightOn, lightOff;
@@ -35,7 +35,7 @@ public class stoichiometryModule : MonoBehaviour {
         rightToxic, leftToxic, rightGas, leftGas, halfSolved = false, amogus = false;
     //currentDisplay = (0 for Bases, 1 for Salts)
     //private int[] leftRGB = new int[3], rightRBG = new int[3], centreRBG= new int[3];
-    private Color lightRed = new Color(1, 0.796f, 0.796f, 1), lightBlue = new Color(0.796f, 0.796f, 1,1);
+    private Color lightRed = new Color(1, 0.796f, 0.796f, 1), lightBlue = new Color(0.796f, 0.796f, 1,1), darkRed = new Color(.25f, 0.199f, 0.199f, 1), darkBlue = new Color(0.199f, 0.199f, .25f, 1);
     private string alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ", numerals = "0123456789", solveFluff;
     private int[] acidIndexes = { 2,0,6,8,1,3,7,9,4,5};
     private string[] colorCodes = { "r","g","b","gb","rb","rg","k","rgb"};
@@ -209,6 +209,8 @@ public class stoichiometryModule : MonoBehaviour {
         int centralDegree = colorDegree(centralColor);
         int firstBase, secondBase;
 
+        redOn.color = lightRed;
+        blueOn.color = darkBlue;
         #endregion
 
         #region Acid Determining
@@ -676,11 +678,15 @@ public class stoichiometryModule : MonoBehaviour {
             {
                 baseDisplay.text = bases[baseOneIndex].getSymbol();
                 baseDisplay.color = lightRed;
+                redOn.color = lightRed;
+                blueOn.color = darkBlue;
             }
             else
             {
                 baseDisplay.text = bases[baseTwoIndex].getSymbol();
                 baseDisplay.color = lightBlue;
+                redOn.color = darkRed;
+                blueOn.color = lightBlue;
             }
         }
         else
