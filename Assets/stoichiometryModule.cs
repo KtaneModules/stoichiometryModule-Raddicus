@@ -394,7 +394,7 @@ public class stoichiometryModule : MonoBehaviour {
         int[] notDrops = new int[3];
         int f = Random.Range(1, 100); while (f == leftBaseDrops || f == rightBaseDrops) { f = Random.Range(1, 100); }
         int j = Random.Range(1, 100); while (j == leftBaseDrops || j == rightBaseDrops || j == f) { j = Random.Range(1, 100); }
-        int k = Random.Range(1, 100); while (k == leftBaseDrops || k == rightBaseDrops || k == f || k == j) { j = Random.Range(1, 100); }
+        int k = Random.Range(1, 100); while (k == leftBaseDrops || k == rightBaseDrops || k == f || k == j) { k = Random.Range(1, 100); }
         notDrops[0] = f; notDrops[1] = f; notDrops[2] = k;
     }
 
