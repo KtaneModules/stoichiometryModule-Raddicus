@@ -697,11 +697,15 @@ public class stoichiometryModule : MonoBehaviour {
             {
                 baseDisplay.text = reactions[baseOneIndex, saltOneIndex].getSalt();
                 baseDisplay.color = lightRed;
+                redOn.color = lightRed;
+                blueOn.color = darkBlue;
             }
             else
             {
                 baseDisplay.text = reactions[baseTwoIndex, saltTwoIndex].getSalt();
                 baseDisplay.color = lightBlue;
+                redOn.color = darkRed;
+                blueOn.color = lightBlue;
             }
         }
     }
