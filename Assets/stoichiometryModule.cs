@@ -588,7 +588,10 @@ public class stoichiometryModule : MonoBehaviour {
         if (currentCol == "lightOn" || currentCol == "lightOff")                                   //I am very mildly peeved that you don't use an int[] for the colors. Expect several angry work emails >:(                                
             return;
         if (CBON && currentCol != "black" && currentCol != "white" && currentCol != "grey") //We don't need colorblind support for these colors! They aren't even real! Ha!
+        {
             cbText.text = currentCol;
+            cbText.color = (currentCol == "red" || currentCol == "green" || currentCol == "blue") ? Color.white : Color.black;
+        }
         else
             cbText.text = string.Empty;
     }
